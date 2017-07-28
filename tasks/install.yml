@@ -1,0 +1,35 @@
+---
+- name: Install dependencies
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ graylog_dependencies }}"
+
+- name: Add GPG key [Ubuntu]
+  apt_key:
+    url: "http://packages.graylog2.org/repo/debian/keyring.gpg"
+    state: present
+  environment:
+    http_proxy: "{{ http_proxy | default('') }}"
+    https_proxy: "{{ https_proxy | default('') }}"
+  when: ansible_pkg_mgr == "apt"
+
+- name: Add graylog2 repository [Ubuntu]
+  apt_repository:
+    repo: "deb https://packages.graylog2.org/repo/debian/ stable {{ graylog_version }}"
+    state: present
+    update_cache: True
+  when: ansible_pkg_mgr == "apt"
+
+- name: Add graylog2 repository [CentOS]
+  yum:
+    name: "https://packages.graylog2.org/repo/packages/graylog-{{ graylog_version }}-repository_latest.rpm"
+    state: present
+    update_cache: True
+  when: ansible_pkg_mgr == "yum"
+
+- name: Install graylog server
+  package:
+    name: 'graylog-server'
+    state: present
+  notify: restart graylog

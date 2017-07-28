@@ -1,0 +1,33 @@
+---
+graylog_version: '2.2'
+
+graylog_address: "{{ ansible_default_ipv4.address }}"
+
+# default password: "password"
+graylog_root:
+  username: soi
+  email: root@localhost
+  password_sha2: '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'
+
+graylog_rotation_strategy: count
+graylog_max_docs_per_index: 20000000
+graylog_max_number_of_indices: 20
+graylog_retention_strategy: delete
+
+graylog_elasticsearch_shards: 4
+graylog_elasticsearch_replicas: 0
+graylog_elasticsearch_index_prefix: graylog
+
+graylog_password_salt: ""
+
+#graylog_mongodb:
+#  user:
+#  pass:
+#  hosts:
+#    - localhost
+#  collection: graylog
+#  replicaset:
+graylog_mongodb:
+  hosts:
+    - localhost
+  collection: graylog

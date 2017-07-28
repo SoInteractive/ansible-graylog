@@ -1,0 +1,5 @@
+---
+graylog_dependencies:
+  - python-software-properties
+  - apt-transport-https
+  - dialog

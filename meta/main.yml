@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  author: Pawel Krupa
+  description: Graylog2 log management
+  company: Sointeractive
+  license: MIT
+  min_ansible_version: 2.0
+  platforms:
+  - name: Ubuntu
+    versions:
+    - xenial
+  - name: EL
+    versions:
+    - 7
+  galaxy_tags:
+  - logs
+  - monitoring
+
+dependencies:
+- SoInteractive.java
