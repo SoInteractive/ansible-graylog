@@ -8,10 +8,17 @@
       with_items:
         - iproute
         - net-tools
+        - mongodb
+
+    - name: ensure mongodb has started
+      service:
+        name: mongodb
+        enabled: yes
+        state: started
 
 - hosts: all
   roles:
     - graylog
   vars:
-    graylog_password_salt: "testsalt"
+    graylog_password_salt: "testsalt_mustbemin16chars"
     graylog_address: "127.0.0.1"
