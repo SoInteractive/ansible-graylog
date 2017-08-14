@@ -12,6 +12,16 @@
     msg: "Run 'pwgen -N 1 -s 96' for random salt"
   when: graylog_password_salt == ""
 
+- name: Generate sha256sum for password
+  shell: "echo -n {{ graylog_root.password }} | sha256sum | cut -d' ' -f1 > /etc/graylog/sha256sum"
+  args:
+    creates: "/etc/graylog/sha256sum"
+
+- name: Read sha256sum for configuration purpose
+  slurp:
+    src: "/etc/graylog/sha256sum"
+  register: graylog_sha256sum
+
 - name: Graylog server should be configured
   template:
     src: 'graylog.server.conf.j2'
@@ -47,3 +57,49 @@
     state: absent
 
 #- name: Create mongodb user
+- name: Graylog server MUST be running
+  service:
+    name: "graylog-server"
+    state: started
+
+- name: wait for graylog to configure
+  uri:
+    url: http://localhost:9000
+    status_code: 200,403
+    timeout: 5
+  register: graylog_service_status
+  retries: 10
+  delay: 5
+  until:
+    - ('status' in graylog_service_status)
+    - (graylog_service_status['status'] == 200) or (graylog_service_status['status'] == 403)
+
+- name: download plugins
+  get_url:
+    url: "{{ item }}"
+    dest: /usr/share/graylog-server/plugin
+  with_items: "{{ graylog_plugins }}"
+
+- name: get index id
+  uri:
+    url: "http://{{ graylog_address }}:9000/api/system/indices/index_sets"
+    user: "{{ graylog_root.username }}"
+    password: "{{ graylog_root.password }}"
+    method: GET
+    return_content: yes
+  register: response
+  retries: 10
+  delay: 5
+  until:
+    - (response['status'] == 200) or (response['status'] == 403)
+
+- name: configure index retention
+  uri:
+    url: "http://{{ graylog_address }}:9000/api/system/indices/index_sets/{{ response.json.index_sets[0].id }}"
+    user: "{{ graylog_root.username }}"
+    password: "{{ graylog_root.password }}"
+    method: PUT
+    headers:
+      Content-Type: "application/json"
+    body_format: json
+    body: "{{ graylog_logretention_conf }}"

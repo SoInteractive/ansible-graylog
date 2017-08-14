@@ -18,7 +18,8 @@ def test_files(File):
     present = [
         "/etc/graylog/server/log4j2.xml",
         "/etc/graylog/server/node-id",
-        "/etc/graylog/server/server.conf"
+        "/etc/graylog/server/server.conf",
+        "/usr/share/graylog-server/plugin/graylog-plugin-slack-2.4.0.jar"
     ]
     if present:
         for file in present:
@@ -35,6 +36,7 @@ def test_service(Service):
         for service in present:
             s = Service(service)
             assert s.is_enabled
+            assert s.is_running
 
 
 def test_packages(Package):
@@ -47,11 +49,11 @@ def test_packages(Package):
             assert p.is_installed
 
 
-# def test_socket(Socket):
-#     present = [
-#         # "unix:///run/haproxy/admin.sock",
-#         "tcp://127.0.0.1:9000"
-#     ]
-#     for socket in present:
-#         s = Socket(socket)
-#         assert s.is_listening
+def test_socket(Socket):
+    present = [
+        # "unix:///run/haproxy/admin.sock",
+        "tcp://127.0.0.1:9000"
+    ]
+    for socket in present:
+        s = Socket(socket)
+        assert s.is_listening

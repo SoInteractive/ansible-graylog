@@ -5,9 +5,9 @@ graylog_address: "{{ ansible_default_ipv4.address }}"
 
 # default password: "password"
 graylog_root:
-  username: soi
+  username: admin
+  password: ''
   email: root@localhost
-  password_sha2: '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'
 
 graylog_rotation_strategy: count
 graylog_max_docs_per_index: 20000000
@@ -31,3 +31,24 @@ graylog_mongodb:
   hosts:
     - localhost
   collection: graylog
+
+graylog_logretention_conf:
+  title: "Default index set"
+  description: "default"
+  index_prefix: "graylog"
+  shards: 4
+  replicas: 0
+  rotation_strategy_class: "org.graylog2.indexer.rotation.strategies.TimeBasedRotationStrategy"
+  rotation_strategy:
+    type: "org.graylog2.indexer.rotation.strategies.TimeBasedRotationStrategyConfig"
+    rotation_period: "P1M"
+  retention_strategy_class: "org.graylog2.indexer.retention.strategies.DeletionRetentionStrategy"
+  retention_strategy:
+    type: "org.graylog2.indexer.retention.strategies.DeletionRetentionStrategyConfig"
+    max_number_of_indices: 3
+  index_optimization_max_num_segments: 1
+  index_optimization_disabled: false
+  writable: true
+
+graylog_plugins:
+  -  "https://github.com/graylog-labs/graylog-plugin-slack/releases/download/2.4.0/graylog-plugin-slack-2.4.0.jar"

@@ -5,7 +5,7 @@ password_secret = {{ graylog_password_salt }}
 
 root_username = {{ graylog_root.username }}
 # Create one by using for example: echo -n yourpassword | shasum -a 256
-root_password_sha2 = {{ graylog_root.password_sha2 }}
+root_password_sha2 = {{ graylog_sha256sum['content'] | b64decode }}
 root_email = {{ graylog_root.email }}
 root_timezone = UTC
 
