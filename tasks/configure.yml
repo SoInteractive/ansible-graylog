@@ -64,28 +64,28 @@
     - ('status' in graylog_service_status)
     - (graylog_service_status['status'] == 200) or (graylog_service_status['status'] == 403)
 
+- name: download plugins
+  get_url:
+    url: "{{ item }}"
+    dest: /usr/share/graylog-server/plugin
+  with_items: "{{ graylog_plugins }}"
+
 - name: get index id
   uri:
     url: "http://{{graylog_address}}:9000/api/system/indices/index_sets"
-    user: "{{graylog_root.username}}"
-    password: "{{graylog_root.default_password}}"
+    user: "{{ graylog_root.username }}"
+    password: "{{ graylog_root.default_password }}"
     method: GET
     return_content: yes
   register: response
 
 - name: configure index retention
   uri:
-    url: "http://{{graylog_address}}:9000/api/system/indices/index_sets/{{response.json.index_sets[0].id}}"
-    user: "{{graylog_root.username}}"
-    password: "{{graylog_root.default_password}}"
+    url: "http://{{graylog_address }}:9000/api/system/indices/index_sets/{{response.json.index_sets[0].id }}"
+    user: "{{ graylog_root.username }}"
+    password: "{{ graylog_root.default_password }}"
     method: PUT
     headers:
       Content-Type: "application/json"
     body_format: json
-    body: "{{graylog_logretention_conf}}"
-
-- name: download plugins
-  get_url:
-    url: "{{item}}"
-    dest: /usr/share/graylog-server/plugin
-  with_items: "{{graylog_plugins}}"
+    body: "{{ graylog_logretention_conf }}"
