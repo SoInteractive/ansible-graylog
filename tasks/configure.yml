@@ -12,6 +12,10 @@
     msg: "Run 'pwgen -N 1 -s 96' for random salt"
   when: graylog_password_salt == ""
 
+- name: Generate sha256sum for password
+  shell: "echo -n {{ graylog_root.password }} | sha256sum | cut -d' ' -f1"
+  register: graylog_sha256sum
+
 - name: Graylog server should be configured
   template:
     src: 'graylog.server.conf.j2'
@@ -78,6 +82,10 @@
     method: GET
     return_content: yes
   register: response
+  retries: 10
+  delay: 5
+  until:
+    - (response['status'] == 200) or (response['status'] == 403)
 
 - name: configure index retention
   uri:
