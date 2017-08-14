@@ -74,16 +74,16 @@
   uri:
     url: "http://{{ graylog_address }}:9000/api/system/indices/index_sets"
     user: "{{ graylog_root.username }}"
-    password: "{{ graylog_root.default_password }}"
+    password: "{{ graylog_root.password }}"
     method: GET
     return_content: yes
   register: response
 
 - name: configure index retention
   uri:
-    url: "http://{{graylog_address }}:9000/api/system/indices/index_sets/{{ response.json.index_sets[0].id }}"
+    url: "http://{{ graylog_address }}:9000/api/system/indices/index_sets/{{ response.json.index_sets[0].id }}"
     user: "{{ graylog_root.username }}"
-    password: "{{ graylog_root.default_password }}"
+    password: "{{ graylog_root.password }}"
     method: PUT
     headers:
       Content-Type: "application/json"
