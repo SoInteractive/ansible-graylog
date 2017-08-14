@@ -13,8 +13,13 @@
   when: graylog_password_salt == ""
 
 - name: Generate sha256sum for password
-  shell: "echo -n {{ graylog_root.password }} | sha256sum | cut -d' ' -f1"
-  register: graylog_sha256sum
+  shell: "echo -n {{ graylog_root.password }} | sha256sum | cut -d' ' -f1 > /etc/graylog/sha256sum"
+  args:
+    creates: "/etc/graylog/sha256sum"
+
+- name: Read sha256sum for configuration purpose
+  slurp: 
+    src: "/etc/graylog/sha256sum"
 
 - name: Graylog server should be configured
   template:
