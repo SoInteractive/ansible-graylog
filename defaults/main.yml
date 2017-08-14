@@ -6,9 +6,9 @@ graylog_address: "{{ ansible_default_ipv4.address }}"
 # default password: "password"
 graylog_root:
   username: admin
-  default_password: password
+  default_password: ''
   email: root@localhost
-  password_sha2: '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'
+  password_sha2: ''
 
 graylog_rotation_strategy: count
 graylog_max_docs_per_index: 20000000
