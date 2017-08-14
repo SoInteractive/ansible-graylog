@@ -18,7 +18,7 @@
     creates: "/etc/graylog/sha256sum"
 
 - name: Read sha256sum for configuration purpose
-  slurp: 
+  slurp:
     src: "/etc/graylog/sha256sum"
   register: graylog_sha256sum
 
