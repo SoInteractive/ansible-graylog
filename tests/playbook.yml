@@ -18,7 +18,7 @@
 
 - hosts: all
   roles:
-    - graylog
+    - ansible-graylog
   vars:
     graylog_password_salt: "testsalt_mustbemin16chars"
     graylog_address: "127.0.0.1"
