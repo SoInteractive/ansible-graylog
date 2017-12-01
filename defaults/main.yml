@@ -1,5 +1,5 @@
 ---
-graylog_version: '2.2'
+graylog_version: '2.3'
 
 graylog_address: "{{ ansible_default_ipv4.address }}"
 
