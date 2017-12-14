@@ -16,6 +16,9 @@ web_enable = true
 web_listen_uri = http://{{ graylog_address }}:9000/
 
 rotation_strategy = {{ graylog_rotation_strategy }}
+
+elasticsearch_hosts = {% for item in graylog_elasticsearch_hosts %}{{ item }}{% if not loop.last %},{% endif %} {% endfor %}
+
 elasticsearch_max_docs_per_index = {{ graylog_max_docs_per_index }}
 elasticsearch_max_number_of_indices = {{ graylog_max_number_of_indices }}
 retention_strategy = {{ graylog_retention_strategy }}
