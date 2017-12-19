@@ -54,3 +54,4 @@ graylog_logretention_conf:
 
 graylog_plugins:
   -  "https://github.com/graylog-labs/graylog-plugin-slack/releases/download/2.4.0/graylog-plugin-slack-2.4.0.jar"
+  - "https://github.com/graylog-labs/graylog-plugin-metrics-reporter/releases/download/1.5.0/metrics-reporter-prometheus-1.5.0.jar"

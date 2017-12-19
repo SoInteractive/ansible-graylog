@@ -19,7 +19,8 @@ def test_files(File):
         "/etc/graylog/server/log4j2.xml",
         "/etc/graylog/server/node-id",
         "/etc/graylog/server/server.conf",
-        "/usr/share/graylog-server/plugin/graylog-plugin-slack-2.4.0.jar"
+        "/usr/share/graylog-server/plugin/graylog-plugin-slack-2.4.0.jar",
+        "/usr/share/graylog-server/plugin/metrics-reporter-prometheus-1.5.0.jar"
     ]
     if present:
         for file in present:
