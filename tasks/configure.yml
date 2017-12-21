@@ -68,7 +68,7 @@
     status_code: 200,403
     timeout: 5
   register: graylog_service_status
-  retries: 10
+  retries: 15
   delay: 5
   until:
     - ('status' in graylog_service_status)
