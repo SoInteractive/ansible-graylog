@@ -117,4 +117,3 @@
     body_format: json
     body: "{{ item }}"
   with_items: "{{ graylog_input_conf }}"
-
