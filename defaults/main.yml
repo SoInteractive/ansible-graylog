@@ -34,6 +34,17 @@ graylog_mongodb:
     - localhost
   collection: graylog
 
+graylog_input_conf:
+  - title: "Global log input"
+    type: "org.graylog2.inputs.gelf.tcp.GELFTCPInput"
+    configuration:
+      bind_address: "0.0.0.0"
+      port: 12201
+      recv_buffer_size: 262144
+      override_source: null
+      decompress_size_limit: 8388608
+    global: true
+
 graylog_logretention_conf:
   title: "Default index set"
   description: "default"

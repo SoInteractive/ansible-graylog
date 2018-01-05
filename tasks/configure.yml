@@ -103,3 +103,15 @@
       Content-Type: "application/json"
     body_format: json
     body: "{{ graylog_logretention_conf }}"
+
+- name: configure inputs
+  uri:
+    url: "http://{{ graylog_address }}:9000/api/system/inputs"
+    user: "{{ graylog_root.username }}"
+    password: "{{ graylog_root.password }}"
+    method: POST
+    force_basic_auth: yes
+    status_code: 201
+    body_format: json
+    body: "{{ item }}"
+  with_items: "{{ graylog_input_conf }}"
