@@ -29,6 +29,7 @@
     owner: graylog
     group: graylog
     mode: 0644
+    backup: yes
   notify: restart graylog
 
 #- name: Graylog server defaults should be configured
@@ -64,7 +65,7 @@
 
 - name: wait for graylog to configure
   uri:
-    url: http://localhost:9000
+    url: "http://{{ graylog_address }}"
     status_code: 200,403
     timeout: 5
   register: graylog_service_status
@@ -82,7 +83,7 @@
 
 - name: get index id
   uri:
-    url: "http://{{ graylog_address }}:9000/api/system/indices/index_sets"
+    url: "http://{{ graylog_address }}/api/system/indices/index_sets"
     user: "{{ graylog_root.username }}"
     password: "{{ graylog_root.password }}"
     method: GET
@@ -95,7 +96,7 @@
 
 - name: configure index retention
   uri:
-    url: "http://{{ graylog_address }}:9000/api/system/indices/index_sets/{{ response.json.index_sets[0].id }}"
+    url: "http://{{ graylog_address }}/api/system/indices/index_sets/{{ response.json.index_sets[0].id }}"
     user: "{{ graylog_root.username }}"
     password: "{{ graylog_root.password }}"
     method: PUT
@@ -106,7 +107,7 @@
 
 - name: configure inputs
   uri:
-    url: "http://{{ graylog_address }}:9000/api/system/inputs"
+    url: "http://{{ graylog_address }}/api/system/inputs"
     user: "{{ graylog_root.username }}"
     password: "{{ graylog_root.password }}"
     method: POST

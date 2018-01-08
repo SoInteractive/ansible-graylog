@@ -13,6 +13,8 @@
     http_proxy: "{{ http_proxy | default('') }}"
     https_proxy: "{{ https_proxy | default('') }}"
   when: ansible_pkg_mgr == "apt"
+  retries: 15
+  delay: 5
 
 - name: Add graylog2 repository [Ubuntu]
   apt_repository:

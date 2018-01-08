@@ -21,7 +21,7 @@
     - ansible-graylog
   vars:
     graylog_password_salt: "testsalt_mustbemin16chars"
-    graylog_address: "127.0.0.1"
+    graylog_address: "127.0.0.1:9000"
     graylog_root:
       username: admin
       password: 'password'
