@@ -4,7 +4,7 @@ galaxy_info:
   description: Graylog2 log management
   company: Sointeractive
   license: MIT
-  min_ansible_version: 2.0
+  min_ansible_version: 2.2
   platforms:
   - name: Ubuntu
     versions:
@@ -15,6 +15,3 @@ galaxy_info:
   galaxy_tags:
   - logs
   - monitoring
-
-dependencies:
-- SoInteractive.java

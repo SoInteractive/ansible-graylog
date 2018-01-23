@@ -1,30 +1,12 @@
 # {{ ansible_managed }}
 is_master = true
 node_id_file = /etc/graylog/server/node-id
-password_secret = {{ graylog_password_salt }}
 
-root_username = {{ graylog_root.username }}
 # Create one by using for example: echo -n yourpassword | shasum -a 256
-root_password_sha2 = {{ graylog_sha256sum['content'] | b64decode }}
-root_email = {{ graylog_root.email }}
 root_timezone = UTC
 
 plugin_dir = /usr/share/graylog-server/plugin
 
-rest_listen_uri = http://{{ graylog_address }}/api/
-web_enable = true
-web_listen_uri = http://{{ graylog_address }}/
-
-rotation_strategy = {{ graylog_rotation_strategy }}
-
-elasticsearch_hosts = {% for item in graylog_elasticsearch_hosts %}{{ item }}{% if not loop.last %},{% endif %} {% endfor %}
-
-elasticsearch_max_docs_per_index = {{ graylog_max_docs_per_index }}
-elasticsearch_max_number_of_indices = {{ graylog_max_number_of_indices }}
-retention_strategy = {{ graylog_retention_strategy }}
-elasticsearch_shards = {{ graylog_elasticsearch_shards }}
-elasticsearch_replicas = {{ graylog_elasticsearch_replicas }}
-elasticsearch_index_prefix = {{ graylog_elasticsearch_index_prefix }}
 
 allow_leading_wildcard_searches = false
 allow_highlighting = false
@@ -44,7 +26,6 @@ message_journal_enabled = true
 message_journal_dir = /var/lib/graylog-server/journal
 lb_recognition_period_seconds = 3
 
-mongodb_uri = mongodb://{% if graylog_mongodb.user is defined and graylog_mongodb.pass is defined %}{{ graylog_mongodb.user }}:{{ graylog_mongodb.pass }}@{% endif %}{{ graylog_mongodb.hosts|join(',') }}/{{ graylog_mongodb.collection }}{% if graylog_mongodb.replicaset is defined %}?replicaSet={{ graylog_mongodb.replicaset }}{% endif %}
 
 mongodb_max_connections = 1000
 mongodb_threads_allowed_to_block_multiplier = 5

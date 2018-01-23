@@ -8,18 +8,22 @@
       with_items:
         - iproute
         - net-tools
-        - mongodb
-
-    - name: ensure mongodb has started
-      service:
-        name: mongodb
-        enabled: yes
-        state: started
 
 - hosts: all
   roles:
+    - SoInteractive.elasticsearch
+    - SoInteractive.mongodb
     - ansible-graylog
   vars:
+    elasticsearch_version: "5.6.6"
+    elasticsearch_node_master: true
+    elasticsearch_additional_settings:
+      xpack.security.enabled: "false"
+      http.host: "0.0.0.0"
+      transport.host: "localhost"
+      network.host: "0.0.0.0"
+    elasticsearch_master_node: true
+    mongodb_hosts_group: graylog
     graylog_password_salt: "testsalt_mustbemin16chars"
     graylog_address: "127.0.0.1:9000"
     graylog_root:
