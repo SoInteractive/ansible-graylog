@@ -1,14 +1,14 @@
 ---
 graylog_version: "2.4"
 graylog_port: 9000
-graylog_address: "{{ ansible_default_ipv4.address }}:{{ graylog_version }}"
+graylog_address: "{{ ansible_default_ipv4.address }}:{{ graylog_port }}"
 
 graylog_syslog_port: 514
 
 # default password: "password"
 graylog_root:
   username: admin
-  password: ''
+  password: 'password'
   email: root@localhost
 
 graylog_rotation_strategy: count

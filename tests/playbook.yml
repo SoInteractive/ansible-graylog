@@ -8,6 +8,15 @@
       with_items:
         - iproute
         - net-tools
+    - name: install mongo
+      docker_container:
+        name: "mongo"
+        image: "mongo:3.2.18"
+        state: started
+        network_mode: host
+        restart_policy: "unless-stopped"
+        ports:
+          - "27017:27017"
 
 - hosts: all
   roles:

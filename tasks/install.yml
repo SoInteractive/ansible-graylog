@@ -23,16 +23,6 @@
     src: "/tmp/graylog_sha256sum"
   register: graylog_sha256sum
 
-- name: install mongo
-  docker_container:
-    name: "mongo"
-    image: "mongo:3.2.18"
-    state: started
-    network_mode: host
-    restart_policy: "unless-stopped"
-    ports:
-      - "27017:27017"
-
 - name: create plugins directory
   file:
     path: "{{ graylog_plugins_dir }}"
