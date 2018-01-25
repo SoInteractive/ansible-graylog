@@ -1,12 +1,14 @@
 ---
-graylog_version: '2.3'
+graylog_version: "2.4"
+graylog_port: 9000
+graylog_address: "{{ ansible_default_ipv4.address }}:{{ graylog_port }}"
 
-graylog_address: "{{ ansible_default_ipv4.address }}:9000"
+graylog_syslog_port: 514
 
 # default password: "password"
 graylog_root:
   username: admin
-  password: ''
+  password: 'password'
   email: root@localhost
 
 graylog_rotation_strategy: count
@@ -63,6 +65,18 @@ graylog_logretention_conf:
   index_optimization_disabled: false
   writable: true
 
+# Do not include trailing slash
+graylog_plugins_dir: "/usr/share/graylog-plugins"
 graylog_plugins:
-  -  "https://github.com/graylog-labs/graylog-plugin-slack/releases/download/2.4.0/graylog-plugin-slack-2.4.0.jar"
+  - "https://github.com/graylog-labs/graylog-plugin-slack/releases/download/2.4.0/graylog-plugin-slack-2.4.0.jar"
   - "https://github.com/graylog-labs/graylog-plugin-metrics-reporter/releases/download/1.5.0/metrics-reporter-prometheus-1.5.0.jar"
+
+# Docker
+graylog_docker_container_name: "graylog"
+graylog_docker_network_mode: "host"
+graylog_docker_restart_policy: "unless-stopped"
+graylog_docker_image_source: "graylog/graylog"
+
+
+# Additional options
+graylog_additional_options: {}

@@ -1,37 +1,85 @@
 ---
-- name: Install dependencies
+- name: Install python-pip
   package:
-    name: "{{ item }}"
+    name: python-pip
     state: present
-  with_items: "{{ graylog_dependencies }}"
 
-- name: Add GPG key [Ubuntu]
-  apt_key:
-    url: "http://packages.graylog2.org/repo/debian/keyring.gpg"
-    state: present
-  environment:
-    http_proxy: "{{ http_proxy | default('') }}"
-    https_proxy: "{{ https_proxy | default('') }}"
-  when: ansible_pkg_mgr == "apt"
-  retries: 15
-  delay: 5
+- name: Install docker-py
+  pip:
+    name: docker-py
 
-- name: Add graylog2 repository [Ubuntu]
-  apt_repository:
-    repo: "deb https://packages.graylog2.org/repo/debian/ stable {{ graylog_version }}"
-    state: present
-    update_cache: True
-  when: ansible_pkg_mgr == "apt"
+- name: Fail when salt is not specified
+  fail:
+    msg: "Run 'pwgen -sN 1 96' for random salt"
+  when: graylog_password_salt == ""
 
-- name: Add graylog2 repository [CentOS]
-  yum:
-    name: "https://packages.graylog2.org/repo/packages/graylog-{{ graylog_version }}-repository_latest.rpm"
-    state: present
-    update_cache: True
-  when: ansible_pkg_mgr == "yum"
+- name: Generate sha256sum for password
+  shell: "echo -n {{ graylog_root.password }} | sha256sum | cut -d' ' -f1 > /tmp/graylog_sha256sum"
+  args:
+    creates: "/tmp/graylog_sha256sum"
 
-- name: Install graylog server
-  package:
-    name: 'graylog-server'
-    state: present
-  notify: restart graylog
+- name: Read sha256sum for configuration purpose
+  slurp:
+    src: "/tmp/graylog_sha256sum"
+  register: graylog_sha256sum
+
+- name: create plugins directory
+  file:
+    path: "{{ graylog_plugins_dir }}"
+    state: directory
+
+- name: download plugins
+  get_url:
+    url: "{{ item }}"
+    dest: "{{ graylog_plugins_dir }}"
+  with_items: "{{ graylog_plugins }}"
+
+- name: register downloaded plugins
+  find:
+    paths:
+      - "{{ graylog_plugins_dir }}"
+  register: plugins
+
+- name: register plugin files
+  set_fact:
+    plugin_files: "{% for plugin in plugins.files %}{{ graylog_plugins_dir }}/{{ plugin.path.split('/')[-1:][0] }}:/usr/share/graylog/plugin/{{ plugin.path.split('/')[-1:][0] }} {% endfor %}"
+
+- name: register plugin file names
+  set_fact:
+    plugin_volumes: "{{ plugin_files[:-1].split(' ') }}"
+
+- name: set Graylog options
+  set_fact:
+    graylog_options:
+      GRAYLOG_WEB_ENDPOINT_URI: "http://{{ graylog_address }}/api"
+      GRAYLOG_PASSWORD_SECRET: "{{ graylog_password_salt }}"
+      GRAYLOG_ROOT_USERNAME: "{{ graylog_root.username }}"
+      GRAYLOG_ROOT_EMAIL: "{{ graylog_root.email }}"
+      GRAYLOG_ROOT_PASSWORD_SHA2: "{{ graylog_sha256sum['content'] | b64decode }}"
+      GRAYLOG_REST_LISTEN_URI: "http://{{ graylog_address }}/api/"
+      GRAYLOG_WEB_ENABLE: "true"
+      GRAYLOG_WEB_LISTEN_URI: "http://{{ graylog_address }}/"
+      GRAYLOG_ROTATION_STRATEGY: "{{ graylog_rotation_strategy }}"
+      GRAYLOG_ELASTICSEARCH_HOSTS: "{% for item in graylog_elasticsearch_hosts %}{{ item }}{% if not loop.last %},{% endif %} {% endfor %}"
+      GRAYLOG_ELASTICSEARCH_MAX_DOCS_PER_INDEX: "{{ graylog_max_docs_per_index }}"
+      GRAYLOG_ELASTICSEARCH_MAX_NUMBER_OF_INDICES: "{{ graylog_max_number_of_indices }}"
+      GRAYLOG_RETENTION_STRATEGY: "{{ graylog_retention_strategy }}"
+      GRAYLOG_ELASTICSEARCH_SHARDS: "{{ graylog_elasticsearch_shards }}"
+      GRAYLOG_ELASTICSEARCH_REPLICAS: "{{ graylog_elasticsearch_replicas }}"
+      GRAYLOG_ELASTICSEARCH_INDEX_PREFIX: "{{ graylog_elasticsearch_index_prefix }}"
+      GRAYLOG_MONGODB_MAX_CONNECTIONS: 1000
+      GRAYLOG_MONGODB_URI: "mongodb://{% if graylog_mongodb.user is defined and graylog_mongodb.pass is defined %}{{ graylog_mongodb.user }}:{{ graylog_mongodb.pass }}@{% endif %}{{ graylog_mongodb.hosts|join(',') }}/{{ graylog_mongodb.collection }}{% if graylog_mongodb.replicaset is defined %}?replicaSet={{ graylog_mongodb.replicaset }}{% endif %}"
+
+- name: install Graylog
+  docker_container:
+    name: "{{ graylog_docker_container_name }}"
+    image: "{{ graylog_docker_image_source }}:{{ graylog_version }}"
+    state: started
+    network_mode: "{{ graylog_docker_network_mode }}"
+    restart_policy: "{{ graylog_docker_restart_policy }}"
+    volumes: "{{ plugin_volumes }}"
+    ports:
+      - "{{ graylog_port }}:9000"
+      - "{{ graylog_syslog_port }}:514"
+      - "{{ graylog_syslog_port }}:514/udp"
+    env: "{{ graylog_options | combine(graylog_additional_options) }}"

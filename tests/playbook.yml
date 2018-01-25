@@ -8,18 +8,39 @@
       with_items:
         - iproute
         - net-tools
-        - mongodb
 
-    - name: ensure mongodb has started
-      service:
-        name: mongodb
-        enabled: yes
+    - name: Install python-pip
+      package:
+        name: python-pip
+        state: present
+
+    - name: Install docker-py
+      pip:
+        name: docker-py
+
+    - name: install mongo
+      docker_container:
+        name: "mongo"
+        image: "mongo:3.2.18"
         state: started
+        network_mode: host
+        restart_policy: "unless-stopped"
+        ports:
+          - "27017:27017"
 
 - hosts: all
   roles:
+    - SoInteractive.elasticsearch
     - ansible-graylog
   vars:
+    elasticsearch_version: "5.6.6"
+    elasticsearch_node_master: true
+    elasticsearch_additional_settings:
+      xpack.security.enabled: "false"
+      http.host: "0.0.0.0"
+      transport.host: "localhost"
+      network.host: "0.0.0.0"
+    elasticsearch_master_node: true
     graylog_password_salt: "testsalt_mustbemin16chars"
     graylog_address: "127.0.0.1:9000"
     graylog_root:

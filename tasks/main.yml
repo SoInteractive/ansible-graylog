@@ -12,9 +12,4 @@
 
 - include: install.yml
 
-- name: enable graylog
-  service:
-    name: "graylog-server"
-    enabled: yes
-
 - include: configure.yml
