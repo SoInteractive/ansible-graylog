@@ -8,6 +8,16 @@
       with_items:
         - iproute
         - net-tools
+
+    - name: Install python-pip
+      package:
+        name: python-pip
+        state: present
+
+    - name: Install docker-py
+      pip:
+        name: docker-py
+
     - name: install mongo
       docker_container:
         name: "mongo"
