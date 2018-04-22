@@ -7,6 +7,12 @@ Ansible Role: graylog
 
 Graylog2 log management
 
+# :warning: IMPORTANT NOTICE
+
+THIS PROJECT IS ABANDONED. WE DO NOT ACCEPT ANY NEW ISSUES AND/OR PULL REQUESTS.
+
+Please use [official ansible graylog role](https://github.com/Graylog2/graylog-ansible-role).
+
 Example usage
 -------------
 
