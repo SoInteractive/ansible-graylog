@@ -1,20 +1,5 @@
 ---
 - name: restart graylog
-  docker_container:
-    name: "{{ graylog_docker_container_name }}"
-    image: "{{ graylog_docker_image_source }}:{{ graylog_version }}"
-    state: "{{ item }}"
-    network_mode: "{{ graylog_docker_network_mode }}"
-    restart_policy: "{{ graylog_docker_restart_policy }}"
-    volumes: "{{ plugin_volumes }}"
-    ports:
-      - "{{ graylog_http_port }}:9000"
-      - "{{ graylog_syslog_port }}:514"
-      - "{{ graylog_syslog_port }}:514/udp"
-      - "{{ graylog_input_conf.port }}:12201"
-      - "{{ graylog_input_conf.port }}:12201/udp"
-    volumes:
-    env: "{{ graylog_options | combine(graylog_additional_options) }}"
-  with_items:
-    - stopped
-    - started
+  service:
+    name: "graylog-server"
+    state: restarted
