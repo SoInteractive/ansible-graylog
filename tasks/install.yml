@@ -16,14 +16,14 @@
   retries: 15
   delay: 5
 
-- name: Add graylog2 repository [Ubuntu]
+- name: Add graylog3 repository [Ubuntu]
   apt_repository:
     repo: "deb https://packages.graylog2.org/repo/debian/ stable {{ graylog_version }}"
     state: present
     update_cache: True
   when: ansible_pkg_mgr == "apt"
 
-- name: Add graylog2 repository [CentOS]
+- name: Add graylog3 repository [CentOS]
   yum:
     name: "https://packages.graylog2.org/repo/packages/graylog-{{ graylog_version }}-repository_latest.rpm"
     state: present
